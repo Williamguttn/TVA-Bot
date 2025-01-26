@@ -52,19 +52,34 @@ module.exports = {
                 
                 return;
             }*/
-
             if (typeof groupId == "number") groupId.toString();
             if (typeof guildId == "number") guildId.toString();
             if (typeof roleId == "number") roleId.toString();
 
-            insert.run(groupId, guildId, from, to, roleId, function(err) {
-                if (err) {
-                    errorEmbed(misc, misc.client, interaction, "SQL Error", "Failed to write to database", "errorDBwrite");
-                    console.error(err);
+            if (typeof roleId !== "object") {
+                insert.run(groupId, guildId, from, to, roleId, function(err) {
+                    if (err) {
+                        errorEmbed(misc, misc.client, interaction, "SQL Error", "Failed to write to database", "errorDBwrite");
+                        console.error(err);
+    
+                        return;
+                    }
+                });
+            } else {
+                // Roleid is an object, so we need to loop over it
+                if (roleId.length > 0) {
+                    for (let i = 0; i < roleId.length; i++) {
+                        insert.run(groupId, guildId, from, to, roleId[i], function(err) {
+                            if (err) {
+                                errorEmbed(misc, misc.client, interaction, "SQL Error", "Failed to write to database", "errorDBwrite");
+                                console.error(err);
 
-                    return;
+                                return;
+                            }
+                        });
+                    }
                 }
-            });
+            }
         }
 
         const embed = {

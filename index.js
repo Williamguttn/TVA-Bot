@@ -4,8 +4,8 @@ const TOKEN = process.env.TOKEN;
 const Discord = require("discord.js");
 const fs = require("fs");
 
-const GUILD_ID = "882602677152927744";
-const BOT_ID = "973242883715006515";
+const GUILD_ID = "1175959487035744348";
+const BOT_ID = "1333146044707377153";
 
 const client =  new Discord.Client({ intents: [7796] });
 
@@ -28,7 +28,7 @@ client.commands = new Discord.Collection();
 
 client.login(TOKEN);
 
-const botWIP = true; // Disables the bot 
+const botWIP = false; // Disables the bot 
 const wipList = [ // Discord ID of people allowed to use bot while in WIP mode
     "724590883915431957", "683750424007802916"
 ];

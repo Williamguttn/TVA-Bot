@@ -71,6 +71,7 @@ async function fetchUserGroupRank(noblox, interaction, groupId, userId) {
 
     try {
         rank = await noblox.getRankInGroup(groupId, userId);
+        console.log(rank);
     } catch(err) {
         // This implies that we KNOW the user is in the group, but we can't fetch the rank
         errorEmbed(null, interaction, "Error occurred", "Unable to fetch user rank", "rankfetch");

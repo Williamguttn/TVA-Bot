@@ -3,6 +3,7 @@ const { fetchIdFromUsername, fetchPlayerGroups, fetchUserGroupRank } = require("
 const { doSql } = require("../database/doSql.js");
 const { errorEmbed } = require("../misc/error.js");
 const { reply } = require("../misc/reply.js");
+const { GroupRankCache } = require("../misc/rankCache.js");
 const statusUpdate = require("../misc/updateStatus.js");
 
 module.exports = {
@@ -38,7 +39,6 @@ module.exports = {
 
         //console.log(interaction)
         const userUpdate = plrArg !== null ? await fetchIdFromUsername(noblox, interaction, plrArg, misc.client) : localData[0].roblox_id; // RBLX ID of user to update
-        console.log(userUpdate);
 
         if (!userUpdate) {
             errorEmbed(misc.client, interaction, "Error occurred!", "Is the username correct?", "idfetch");
@@ -79,10 +79,14 @@ module.exports = {
         async function bindRanks() {
             // Find relevant server binds
             const groupIds = new Set(playerGroups.map(g => g.Id.toString()));
-            const matchingBinds = serverBinds.filter(bind => groupIds.has(bind.group_id)); 
-    
+            const matchingBinds = serverBinds.filter(bind => groupIds.has(bind.group_id));
+
+            const rankCache = new GroupRankCache();
+
             for (const bind of matchingBinds) {
-                const rank = await fetchUserGroupRank(noblox, interaction, +bind.group_id, userUpdate);
+                //console.log(+bind.group_id)
+                //const rank = await fetchUserGroupRank(noblox, interaction, +bind.group_id, userUpdate);
+                const rank = await rankCache.getRank(fetchUserGroupRank, noblox, interaction, bind.group_id, userUpdate);
                 const role = await interaction.guild.roles.fetch(bind.role_id.trim());
     
                 if (!role) {

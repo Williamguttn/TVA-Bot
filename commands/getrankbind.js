@@ -34,11 +34,18 @@ module.exports = {
         for (const bind of binds) {
             const from = bind.rank_start;
             const to = bind.rank_end;
+            const roleId = bind.role_id;
+        
+            const key = to ? `${from}-${to}` : `${from}`;
+        
+            if (json[key]) {
+                if (!Array.isArray(json[key])) {
+                    json[key] = [json[key]];
+                }
 
-            if (to) {
-                json[`${from}-${to}`] = bind.role_id;
+                json[key].push(roleId);
             } else {
-                json[`${from}`] = bind.role_id;
+                json[key] = roleId;
             }
         }
 
