@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "discord.js": "^14.17.3",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "noblox.js": "^6.0.2",
+    "sqlite3": "^5.1.7"
+  }
+}
