@@ -23,11 +23,18 @@ module.exports = async function(noblox, interaction, db, playerId) {
         LIMIT 1
     `, [data[0].score]);
 
+    const highestRank = await doSql(db, "SELECT * FROM group_binds ORDER BY points_needed DESC LIMIT 1");
+
     let availableBinds = nextRow ? [...groupBinds, nextRow[0]] : groupBinds;
 
     if (data.length <= 0 || availableBinds.length <= 0) return;
 
     const points = data[0].score;
+
+    // Player is an officer, points wont affect their rank
+    if (points >= highestRank[0].points_needed && await fetchUserGroupRank(noblox, interaction, +highestRank[0].group_id, +playerId) > highestRank[0].rank) {
+        return;
+    }
 
     // Player presumably has the highest rank
     if (availableBinds[availableBinds.length - 1] === undefined) {
@@ -63,8 +70,6 @@ module.exports = async function(noblox, interaction, db, playerId) {
 
     if (promotions.length <= 0) return;
 
-    console.log(availableBinds);
-
     for (const promotion of promotions) {
         let rank = promotion.rank;
         let groupId = promotion.group_id;
@@ -76,6 +81,5 @@ module.exports = async function(noblox, interaction, db, playerId) {
         
         // Give the player the rank
         await setGroupRank(noblox, interaction, +groupId, +playerId, rank);
-        console.log("ranked")
     }
 }

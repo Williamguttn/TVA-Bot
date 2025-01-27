@@ -1,13 +1,18 @@
 require("dotenv").config();
 
 const TOKEN = process.env.TOKEN;
-const Discord = require("discord.js");
+const { GatewayIntentBits, Client, Events, Routes, REST, Collection } = require("discord.js");
 const fs = require("fs");
 
-const GUILD_ID = "1175959487035744348";
+//const GUILD_ID = "1175959487035744348";
+const GUILD_ID = "882602677152927744";
 const BOT_ID = "1333146044707377153";
 
-const client =  new Discord.Client({ intents: [7796] });
+//const client =  new Discord.Client({ intents: [7796] });
+
+const client = new Client({
+    intents: Object.values(GatewayIntentBits)
+});
 
 const db = require("./database/verifydb.js")();
 const { doSql } = require("./database/doSql.js");
@@ -24,13 +29,13 @@ noblox.setCookie(process.env.BOT_COOKIE).then(function() {
 // Start the api
 require("./api/api.js")(db);
 
-client.commands = new Discord.Collection();
+client.commands = new Collection();
 
 client.login(TOKEN);
 
-const botWIP = false; // Disables the bot 
+const botWIP = true; // Disables the bot 
 const wipList = [ // Discord ID of people allowed to use bot while in WIP mode
-    "724590883915431957", "683750424007802916"
+    "724590883915431957", "683750424007802916", "1030159828548599948"
 ];
 
 // Each file in commands will export data for that command
@@ -53,9 +58,9 @@ for (const file of commandsFolder) {
     }
 }
 
-const rest = new Discord.REST().setToken(TOKEN);
+const rest = new REST().setToken(TOKEN);
 
-client.on(Discord.Events.InteractionCreate, async interaction => {
+client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
     const command = interaction.client.commands.get(interaction.commandName);
@@ -86,6 +91,7 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
 
             // If the rank needs a status check then you must also be verified
             if (command.statusReq && localData[0].status < command.statusReq) {
+                console.log(command.statusReq, localData[0].status)
                 errorEmbed(client, interaction, "Status too low", "You do not have the required permissions to run this command", "statuslow");
     
                 return;
@@ -113,7 +119,7 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
         console.log(`Started refreshing ${commands.length} application (/) commands.`);
 
         const data = await rest.put(
-            Discord.Routes.applicationGuildCommands(BOT_ID, GUILD_ID),
+            Routes.applicationGuildCommands(BOT_ID, GUILD_ID),
             { body: commands }
         );
 

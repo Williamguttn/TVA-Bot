@@ -7,7 +7,7 @@ async function fetchIdFromUsername(noblox, interaction, username, client) {
         id = await noblox.getIdFromUsername(username).catch(function() {
             errorEmbed(null, interaction, "Error occurred!", "Is the username correct?", "idfetch");
         });
-        console.log("ID: ", id);
+
         if (!id) {
             errorEmbed(client, interaction, "Error occurred!", "Is the username correct?", "idfetch"); 
         }
@@ -71,7 +71,6 @@ async function fetchUserGroupRank(noblox, interaction, groupId, userId) {
 
     try {
         rank = await noblox.getRankInGroup(groupId, userId);
-        console.log(rank);
     } catch(err) {
         // This implies that we KNOW the user is in the group, but we can't fetch the rank
         errorEmbed(null, interaction, "Error occurred", "Unable to fetch user rank", "rankfetch");
