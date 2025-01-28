@@ -8,7 +8,7 @@ module.exports = function(req, res, next) {
     if (!timestamp || !signature) {
         return res.status(403).json({ error: "Missing signature or timestamp." });
     }
-
+/*
     const now = Math.floor(Date.now() / 1000);
     const then = Math.floor(+timestamp);
     const deltaTime = Math.abs(now - then);
@@ -16,7 +16,7 @@ module.exports = function(req, res, next) {
     // Check if the request is expired
     if (deltaTime > 6) {
         return res.status(400).json({ error: "Request expired." });
-    }
+    }*/
 
     if (req.method === "POST" && req.body) {
         dataToSign = JSON.stringify(req.body);

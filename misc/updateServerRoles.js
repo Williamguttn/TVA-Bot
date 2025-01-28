@@ -31,6 +31,20 @@ async function updateServerRoles(userData, user, interaction, misc, noblox) {
     let removedRoleIds = [];
     let considered = [];
 
+    // If player doesnt have the verified role, add it if they are verified
+    if (!member.roles.cache.has("1175961834763862056") && userData.verified) {
+        addedRoleIds.push("1175961834763862056");
+    }
+
+    // Unverified role
+    if (!userData.verified && !member.has("1175961833782399076")) {
+        addedRoleIds.push("1175961833782399076");
+
+        if (member.roles.cache.has("1175961834763862056")) {
+            removedRoleIds.push("1175961834763862056");
+        }
+    }
+
     async function addBindRoles() {
         for (const group of matchingBinds) {
             if (considered.includes(group.role_id)) {

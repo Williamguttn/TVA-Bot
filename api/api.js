@@ -9,7 +9,7 @@ app.use(express.json());
 
 const PORT = process.env.PORT;
 
-module.exports = function(db) {
+module.exports = function(db, client) {
     // Add a route for each folder in current directory
     fs.readdirSync(__dirname).forEach(file => {
         const fullPath = path.join(__dirname, file);
@@ -22,7 +22,7 @@ module.exports = function(db) {
             // If there is a get file, add it
             if (fs.existsSync(getFilePath)) {
                 app.get(`/api/${file}`, verifyRequest, (req, res) => {
-                    require(getFilePath)(req, res, db);
+                    require(getFilePath)(req, res, db, client);
                 });
             }
 
@@ -30,7 +30,7 @@ module.exports = function(db) {
 
             if (fs.existsSync(getPostPath)) {
                 app.post(`/api/${file}`, verifyRequest, (req, res) => {
-                    require(getPostPath)(req, res, db);
+                    require(getPostPath)(req, res, db, client);
                 });
             }
         }

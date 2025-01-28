@@ -27,11 +27,12 @@ noblox.setCookie(process.env.BOT_COOKIE).then(function() {
 });
 
 // Start the api
-require("./api/api.js")(db);
 
 client.commands = new Collection();
 
 client.login(TOKEN);
+
+require("./api/api.js")(db, client);
 
 const botWIP = true; // Disables the bot 
 const wipList = [ // Discord ID of people allowed to use bot while in WIP mode
