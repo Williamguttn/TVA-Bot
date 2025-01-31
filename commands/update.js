@@ -2,8 +2,7 @@ const { SlashCommandBuilder } = require("discord.js");
 const { doSql } = require("../database/doSql.js");
 const { errorEmbed } = require("../misc/error.js");
 const { reply } = require("../misc/reply.js");
-const { fetchIdFromUsername } = require("../misc/noblox.js");
-const { GroupRankCache } = require("../misc/rankCache.js");
+const { fetchIdFromUsername, fetchUsernameFromId } = require("../misc/noblox.js");
 const { updateServerRoles } = require("../misc/updateServerRoles.js");
 const { status } = require("../misc/status.js");
 const statusUpdate = require("../misc/updateStatus.js");
@@ -39,7 +38,7 @@ module.exports = {
         const userUpdate = plrArg !== null ? await fetchIdFromUsername(noblox, interaction, plrArg, misc.client) : localData[0].roblox_id;
 
         if (!userUpdate) {
-            errorEmbed(misc.client, interaction, "Error occurred!", "Is the username correct?", "idfetch");
+            //errorEmbed(misc.client, interaction, "Error occurred!", "Is the username correct?", "idfetch");
 
             return;
         }
@@ -83,6 +82,17 @@ module.exports = {
             }
 
             return null;
+        }
+
+        // Update server name
+        if (userUpdate) {
+            try {
+                const username = await fetchUsernameFromId(noblox, interaction, userUpdate);
+
+                if (username !== null && username !== undefined) {
+                    await member.setNickname(username);
+                }
+            } catch(e) {console.error("Nickname change failed:", e)}
         }
 
         let embed = {

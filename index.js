@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 const TOKEN = process.env.TOKEN;
-const { GatewayIntentBits, Client, Events, Routes, REST, Collection } = require("discord.js");
+const { GatewayIntentBits, Client, Events, Routes, REST, Collection, MessageFlags } = require("discord.js");
 const fs = require("fs");
 
 //const GUILD_ID = "1175959487035744348";
@@ -34,13 +34,13 @@ client.login(TOKEN);
 
 require("./api/api.js")(db, client);
 
-const botWIP = true; // Disables the bot 
+const botWIP = false; // Disables the bot 
 const wipList = [ // Discord ID of people allowed to use bot while in WIP mode
     "724590883915431957", "683750424007802916", "1030159828548599948"
 ];
 
 // Each file in commands will export data for that command
-const commandsPath = __dirname + "\\commands";
+const commandsPath = __dirname + "/commands";
 const commandsFolder = fs.readdirSync(commandsPath);
 
 let commands = [];
@@ -50,8 +50,7 @@ for (const file of commandsFolder) {
         continue;
     }
 
-    const module = require(`${commandsPath}\\${file}`);
-
+    const module = require(`${commandsPath}/${file}`);
 
     if ("data" in module && "execute" in module) {
         commands.push(module.data.toJSON());
@@ -120,7 +119,7 @@ client.on(Events.InteractionCreate, async interaction => {
         console.log(`Started refreshing ${commands.length} application (/) commands.`);
 
         const data = await rest.put(
-            Routes.applicationGuildCommands(BOT_ID, GUILD_ID),
+            Routes.applicationCommands(BOT_ID),
             { body: commands }
         );
 

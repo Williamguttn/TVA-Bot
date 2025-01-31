@@ -23,6 +23,37 @@ module.exports = function() {
     });*/
 
     /*
+        Medals
+    */
+
+    db.run(`
+        CREATE TABLE IF NOT EXISTS medals (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            description TEXT,
+            display_order INTEGER NOT NULL UNIQUE
+        )
+    `, (err) => {
+        if (err) {
+            console.error("Creating medals table failed:", err.message);
+        }
+    });
+
+    db.run(`
+        CREATE TABLE IF NOT EXISTS user_medals (
+            roblox_id INTEGER,
+            medal_id INTEGER,
+            PRIMARY KEY (roblox_id, medal_id),
+            FOREIGN KEY (roblox_id) REFERENCES users(roblox_id),
+            FOREIGN KEY (medal_id) REFERENCES medals(id)
+        )
+    `, (err) => {
+        if (err) {
+            console.error("Creating medals table failed:", err.message);
+        }
+    });
+
+    /*
         Points is the amount of points needed to get this rank & role
 
         IDs must be text because IDs are too large for integers
@@ -85,7 +116,7 @@ module.exports = function() {
         }
     });
 
-    const debug = true;
+    const debug = false;
 
     if (debug) {
         console.log("\n\n----------------------DB DEBUG----------------------\n\n");
