@@ -22,13 +22,16 @@ module.exports = async function(req, res, db) {
     data[0].medals = [];
 
     try {
-        data[0].medals = await doSql(
+        const medalNames = await doSql(
             db,
             `SELECT name FROM medals 
             JOIN user_medals ON medals.display_order = user_medals.medal_id
             WHERE user_medals.roblox_id = ?`,
             [userId]
         );
+
+        // Push names to medals
+        medalNames.forEach(element => element.name && data[0].medals.push(element.name));
     } catch(err) {
         console.error(err);
     }
