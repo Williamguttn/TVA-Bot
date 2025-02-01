@@ -51,7 +51,7 @@ module.exports = {
 
         try {
             // Make sure medal exists
-            const medal = await doSql(misc.db, "SELECT id FROM medals WHERE id = ?", [medalId]);
+            const medal = await doSql(misc.db, "SELECT id FROM medals WHERE display_order = ?", [medalId]);
         
             if (medal.length === 0) {
                 errorEmbed(misc.client, interaction, "Error occurred!", "Medal does not exist", "medalnotfound");

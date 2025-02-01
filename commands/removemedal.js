@@ -47,7 +47,7 @@ module.exports = {
             title: "Success!",
             description: `Medal **${medal.name}** has been removed!`,
             footer: {
-                text: "createmedal"
+                text: "removemedal"
             }
         };
 

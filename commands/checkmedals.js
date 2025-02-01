@@ -73,40 +73,31 @@ module.exports = {
             }
         }
 
-        let playerMedals;
+        let medals = [];
 
         try {
-            playerMedals = await doSql(misc.db, "SELECT medal_id FROM user_medals WHERE roblox_id = ?", [userId]);
+            medals = await doSql(
+                misc.db,
+                `SELECT medals.* FROM medals 
+                JOIN user_medals ON medals.display_order = user_medals.medal_id
+                WHERE user_medals.roblox_id = ?`,
+                [userId]
+            );
 
-            if (playerMedals.length === 0) {
-                errorEmbed(misc.client, interaction, "Error occurred!", "User has no medals!", "nomedals");
+            if (medals.length === 0) {
+                errorEmbed(misc.client, interaction, "No medals", "User has no medals!", "nomedals");
 
                 return;
             }
-        } catch(err) {
+        } catch (err) {
             errorEmbed(misc.client, interaction, "Error occurred!", "Failed to get medals!", "medalfetch");
             console.error(err);
 
             return;
         }
 
-        let medals = [];
-
-        const allMedals = await doSql(misc.db, "SELECT * FROM medals");
-        
-        for (const medal of playerMedals) {
-            const medalData = allMedals.find(m => m.id === medal.medal_id);
-
-            medals.push(medalData);
-        }
-
-        let medalsText = "";
-
-        for (const medal of medals) {
-            medalsText += `**${medal.name} (${medal.display_order})**\n`;
-            medalsText += `${medal.description}\n\n`;
-        }
-
+        // Convert medals to text output
+        let medalsText = medals.map(medal => `**${medal.name} (${medal.display_order})**\n${medal.description}\n\n`).join("");
         const robloxUsername = await noblox.getUsernameFromId(userId);
 
         const embed = {

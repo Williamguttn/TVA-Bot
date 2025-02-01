@@ -11,7 +11,10 @@ async function updateServerRoles(userData, user, interaction, misc, noblox) {
 
     const member = user;
 
-    
+    if (!member) {
+        return [[], []];
+    }
+
     //const userRoleIds = user.roles.cache.map(role => role.id);
     //const allGuildRoleIds = guild.roles.cache.map(role => role.id);
     //const allBindedRoleIds = binds.map(bind => bind.role_id);
@@ -37,12 +40,16 @@ async function updateServerRoles(userData, user, interaction, misc, noblox) {
     }
 
     // Unverified role
-    if (!userData.verified && !member.has("1175961833782399076")) {
+    if (!userData.verified && !member.roles.cache.has("1175961833782399076")) {
         addedRoleIds.push("1175961833782399076");
 
         if (member.roles.cache.has("1175961834763862056")) {
             removedRoleIds.push("1175961834763862056");
         }
+    }
+
+    if (userData.verified && member.roles.cache.has("1175961833782399076")) {
+        removedRoleIds.push("1175961834763862056");
     }
 
     async function addBindRoles() {

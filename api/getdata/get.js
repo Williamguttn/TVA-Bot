@@ -17,6 +17,22 @@ module.exports = async function(req, res, db) {
         return res.status(404).json({ error: "User not found." });
     }
 
+    // Fetch potential medals
+
+    data[0].medals = [];
+
+    try {
+        data[0].medals = await doSql(
+            db,
+            `SELECT name FROM medals 
+            JOIN user_medals ON medals.display_order = user_medals.medal_id
+            WHERE user_medals.roblox_id = ?`,
+            [userId]
+        );
+    } catch(err) {
+        console.error(err);
+    }
+
     data = data[0];
     res.status(200).json(data);
 };

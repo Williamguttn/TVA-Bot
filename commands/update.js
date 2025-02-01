@@ -54,6 +54,12 @@ module.exports = {
 
         updateData = updateData[0];
 
+        if (!updateData || !updateData.verified) {
+            errorEmbed(misc.client, interaction, "Error occurred!", "User must be verified", "missingverification");
+
+            return;
+        }
+
         // Make sure that the user is in this server
         const member = await interaction.guild.members.fetch(updateData.discord_id);
 
