@@ -2,3 +2,4 @@ node_modules/
 annoying.py
 data.db
 .env
+package-lock.json

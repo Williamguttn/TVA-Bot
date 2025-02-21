@@ -98,5 +98,8 @@ module.exports = {
         } catch(e) {console.error(e)}
 
         require("../database/debug/printRoleBinds.js")(misc.db);
+        // TODO: fix error.js, make it say something even if no interaction reply yet
+        require("../database/debug/printRoleBinds.js")(misc.db);
+        //console.log(roles);
     }
 };
