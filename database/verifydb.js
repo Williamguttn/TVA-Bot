@@ -9,8 +9,6 @@ module.exports = function() {
         }
     });
 
-<<<<<<< HEAD
-=======
     /*db.run(`
         CREATE TABLE IF NOT EXISTS users (
         roblox_id PRIMARY KEY INTEGER NOT NULL,
@@ -24,7 +22,23 @@ module.exports = function() {
         }
     });*/
 
->>>>>>> 58069d67563a30054a979928c6a8929d687528d0
+    /*
+        Reaction roles
+    */
+   db.run(`
+        CREATE TABLE IF NOT EXISTS reaction_roles (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            message_id TEXT NOT NULL,
+            role_id TEXT NOT NULL,
+            emoji TEXT NOT NULL
+        )
+    `, (err) => {
+        if (err) {
+            console.error("Creating medals table failed:", err.message);
+        }
+    });
+
+
     /*
         Medals
     */
@@ -141,8 +155,6 @@ module.exports = function() {
     console.log("DB LIVE");
 
     return db;
-<<<<<<< HEAD
-=======
     /*
     const insert = db.prepare("INSERT OR REPLACE INTO users (roblox_id, discord_id) VALUES (?, ?)");
 
@@ -175,5 +187,4 @@ module.exports = function() {
             db.close();
         });
     });*/
->>>>>>> 58069d67563a30054a979928c6a8929d687528d0
 }

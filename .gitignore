@@ -1,9 +1,6 @@
 node_modules/
 annoying.py
-<<<<<<< HEAD
 data.db
 .env
-=======
 #data.db
 #.env
->>>>>>> 58069d67563a30054a979928c6a8929d687528d0

@@ -43,11 +43,7 @@ module.exports = {
 
         // Check if player exists in the database
         const playerData = await doSql(misc.db, "SELECT * FROM users WHERE roblox_id = ?", [playerId]);
-<<<<<<< HEAD
 
-=======
-        //////// TODO: MAKE STATUS BINDING
->>>>>>> 58069d67563a30054a979928c6a8929d687528d0
         if (playerData.length <= 0) {
             // They will be remembered forever when they get points
             await doSql(misc.db, "INSERT INTO users (roblox_id, score) VALUES (?, ?)", [playerId, points]);
