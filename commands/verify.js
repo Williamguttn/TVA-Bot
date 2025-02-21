@@ -38,7 +38,6 @@ module.exports = {
         // Check if player is verified
         const dbData = await getUserDB(misc.db, playerId);
 
-        console.log(dbData, typeof interaction.user.id);
 
         if (dbData[0] && typeof dbData[0] === "object") {
             if (dbData[0].roblox_id == playerId && dbData[0].verified > 0) {

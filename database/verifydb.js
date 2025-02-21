@@ -9,6 +9,36 @@ module.exports = function() {
         }
     });
 
+    /*db.run(`
+        CREATE TABLE IF NOT EXISTS users (
+        roblox_id PRIMARY KEY INTEGER NOT NULL,
+        discord_id INTEGER NOT NULL,
+        status INTEGER,
+        score INTEGER
+        )
+    `, (err) => {
+        if (err) {
+            console.error("Creating users table failed:", err.message);
+        }
+    });*/
+
+    /*
+        Reaction roles
+    */
+   db.run(`
+        CREATE TABLE IF NOT EXISTS reaction_roles (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            message_id TEXT NOT NULL,
+            role_id TEXT NOT NULL,
+            emoji TEXT NOT NULL
+        )
+    `, (err) => {
+        if (err) {
+            console.error("Creating medals table failed:", err.message);
+        }
+    });
+
+
     /*
         Medals
     */
@@ -125,4 +155,36 @@ module.exports = function() {
     console.log("DB LIVE");
 
     return db;
+    /*
+    const insert = db.prepare("INSERT OR REPLACE INTO users (roblox_id, discord_id) VALUES (?, ?)");
+
+    // Handle insert errors
+    insert.run(1, 1, function(err) {
+        if (err) {
+            console.error("Insert error:", err.message);
+            return;
+        }
+    });
+    
+    insert.run(2, 2, function(err) {
+        if (err) {
+            console.error("Insert error:", err.message);
+            return;
+        }
+        
+        // Only query after inserts are done
+        insert.finalize(); // Clean up the prepared statement
+        
+        // Query the results
+        db.all("SELECT * FROM users ORDER BY roblox_id", [], (err, rows) => {
+            if (err) {
+                console.error("Query error:", err.message);
+                return;
+            }
+            console.log("Query results:", rows);
+            
+            // Close the database connection
+            db.close();
+        });
+    });*/
 }
