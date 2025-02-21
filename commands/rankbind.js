@@ -97,6 +97,13 @@ module.exports = {
             reply(interaction, { embeds: [embed] });
         } catch(e) {console.error(e)}
 
+<<<<<<< HEAD
         require("../database/debug/printRoleBinds.js")(misc.db);
+=======
+
+        // TODO: fix error.js, make it say something even if no interaction reply yet
+        require("../database/debug/printRoleBinds.js")(misc.db);
+        //console.log(roles);
+>>>>>>> 58069d67563a30054a979928c6a8929d687528d0
     }
 };

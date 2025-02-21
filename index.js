@@ -4,8 +4,17 @@ const TOKEN = process.env.TOKEN;
 const { GatewayIntentBits, Client, Events, Routes, REST, Collection, MessageFlags } = require("discord.js");
 const fs = require("fs");
 
+<<<<<<< HEAD
 const BOT_ID = "1333146044707377153";
 
+=======
+//const GUILD_ID = "1175959487035744348";
+const GUILD_ID = "882602677152927744";
+const BOT_ID = "1333146044707377153";
+
+//const client =  new Discord.Client({ intents: [7796] });
+
+>>>>>>> 58069d67563a30054a979928c6a8929d687528d0
 const client = new Client({
     intents: Object.values(GatewayIntentBits)
 });

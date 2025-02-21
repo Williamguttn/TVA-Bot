@@ -38,8 +38,11 @@ module.exports = {
         // Check if player is verified
         const dbData = await getUserDB(misc.db, playerId);
 
+<<<<<<< HEAD
         console.log(dbData, typeof interaction.user.id);
 
+=======
+>>>>>>> 58069d67563a30054a979928c6a8929d687528d0
         if (dbData[0] && typeof dbData[0] === "object") {
             if (dbData[0].roblox_id == playerId && dbData[0].verified > 0) {
                 errorEmbed(misc.client, interaction, "Again?", `User already verified on <@${dbData[0].discord_id}>!`, "alreadyverify");
@@ -154,4 +157,8 @@ module.exports = {
 
         require("../database/registerUser.js").register(misc.db, playerId, interaction.user.id);
     }
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> 58069d67563a30054a979928c6a8929d687528d0

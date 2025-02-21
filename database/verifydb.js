@@ -9,6 +9,22 @@ module.exports = function() {
         }
     });
 
+<<<<<<< HEAD
+=======
+    /*db.run(`
+        CREATE TABLE IF NOT EXISTS users (
+        roblox_id PRIMARY KEY INTEGER NOT NULL,
+        discord_id INTEGER NOT NULL,
+        status INTEGER,
+        score INTEGER
+        )
+    `, (err) => {
+        if (err) {
+            console.error("Creating users table failed:", err.message);
+        }
+    });*/
+
+>>>>>>> 58069d67563a30054a979928c6a8929d687528d0
     /*
         Medals
     */
@@ -125,4 +141,39 @@ module.exports = function() {
     console.log("DB LIVE");
 
     return db;
+<<<<<<< HEAD
+=======
+    /*
+    const insert = db.prepare("INSERT OR REPLACE INTO users (roblox_id, discord_id) VALUES (?, ?)");
+
+    // Handle insert errors
+    insert.run(1, 1, function(err) {
+        if (err) {
+            console.error("Insert error:", err.message);
+            return;
+        }
+    });
+    
+    insert.run(2, 2, function(err) {
+        if (err) {
+            console.error("Insert error:", err.message);
+            return;
+        }
+        
+        // Only query after inserts are done
+        insert.finalize(); // Clean up the prepared statement
+        
+        // Query the results
+        db.all("SELECT * FROM users ORDER BY roblox_id", [], (err, rows) => {
+            if (err) {
+                console.error("Query error:", err.message);
+                return;
+            }
+            console.log("Query results:", rows);
+            
+            // Close the database connection
+            db.close();
+        });
+    });*/
+>>>>>>> 58069d67563a30054a979928c6a8929d687528d0
 }
