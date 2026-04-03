@@ -29,7 +29,6 @@ module.exports = function(req, res, next) {
     // Recompute HMAC using the query string and timestamp
     const computedSignature = crypto
         .createHmac("sha256", process.env.SECRET_KEY)
-        .createHmac("sha256", process.env.SECRET_KEY) // TODO: Use env variables for the secret
         .update(dataToSign)
         .digest("hex");
 

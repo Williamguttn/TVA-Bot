@@ -147,7 +147,7 @@ client.on("messageReactionAdd", async (reaction, user) => {
     
     if (role && !member.roles.cache.has(role.id)) {
         await member.roles.add(role).catch((e) => console.error(e));
-        await member.send("Role successfully added!");
+        await member.send("Role successfully added!").catch((e) => console.error(e));
     }
 });
 
@@ -184,7 +184,7 @@ client.on("messageReactionRemove", async (reaction, user) => {
     const role = guild.roles.cache.get(roleId);
     if (role && member.roles.cache.has(role.id)) {
         await member.roles.remove(role).catch((e) => console.error(e));
-        await member.send("Role successfully removed!");
+        await member.send("Role successfully removed!").catch((e) => console.error(e));
     }
 });
 

@@ -1,10 +1,21 @@
 const fs = require("fs");
 const path = require("path");
 
+const rateLimit = require("express-rate-limit");
+
+const limiter = rateLimit({
+   windowMs: 15 * 60 * 1000,
+   max: 100,
+   message: "Too many requests"
+});
+const morgan = require("morgan");
+
 const express = require("express");
 const verifyRequest = require("./verifyRequest.js");
 const app = express();
 
+app.use(limiter);
+app.use(morgan("combined"));
 app.use(express.json());
 
 const PORT = process.env.PORT;
