@@ -12,9 +12,7 @@
     "skipLibCheck": true,
     "strict": false,
     "noImplicitAny": false,
-    "forceConsistentCasingInFileNames": true,
-    "ignoreDeprecations": "6.0",
-    "moduleDetection": "force"
+    "forceConsistentCasingInFileNames": true
   },
   "include": [
     "index.ts",
