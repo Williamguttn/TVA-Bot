@@ -1,10 +1,8 @@
 const { doSql } = require("../database/doSql");
-const { fetchIdFromUsername, fetchPlayerGroups, fetchUserGroupRank } = require("./noblox");
+const { fetchPlayerGroups } = require("./noblox");
 
 // Member is who they are in the actual server
 async function updateServerRoles(userData, user, interaction, misc, noblox) {
-    const guild = interaction.guild;
-
     // We'll get the binds for this server
     const binds = await doSql(misc.db, "SELECT * FROM rank_binds WHERE server_id = ?", [interaction.guildId]);
     const userGroups = await fetchPlayerGroups(noblox, interaction, userData.roblox_id);
@@ -19,7 +17,9 @@ async function updateServerRoles(userData, user, interaction, misc, noblox) {
     //const allGuildRoleIds = guild.roles.cache.map(role => role.id);
     //const allBindedRoleIds = binds.map(bind => bind.role_id);
 
-    const allUserGroups = userGroups.map(group => ({ id: group.Id, rank: group.Rank }));
+    const allUserGroups = Array.isArray(userGroups)
+        ? userGroups.map(group => ({ id: group.Id, rank: group.Rank }))
+        : [];
 
     // This will be a list of all binds with a group_id thats also in allUserGroups
     const groupIds = new Set(allUserGroups.map(userGroup => userGroup.id.toString()));
@@ -49,7 +49,7 @@ async function updateServerRoles(userData, user, interaction, misc, noblox) {
     }
 
     if (userData.verified && member.roles.cache.has("1175961833782399076")) {
-        removedRoleIds.push("1175961834763862056");
+        removedRoleIds.push("1175961833782399076");
     }
 
     async function addBindRoles() {
@@ -127,33 +127,41 @@ async function updateServerRoles(userData, user, interaction, misc, noblox) {
     // Remove duplicates
     addedRoleIds = [...new Set(addedRoleIds)];
     removedRoleIds = [...new Set(removedRoleIds)];
-    
-    // Start an asynchronous process to let it continue adding/removing roles
-    (async () => {
-        // Roles to add
-        for (const role of addedRoleIds) {
-            const guildRole = await interaction.guild.roles.fetch(role.trim());
-            const hasRole = await member.roles.cache.has(role);
 
-            if (!hasRole) {
-                await member.roles.add(guildRole).catch(console.error);
+    addedRoleIds = addedRoleIds.filter(roleId => !removedRoleIds.includes(roleId));
+
+    const appliedAddedRoleIds = [];
+    const appliedRemovedRoleIds = [];
+
+    for (const roleId of addedRoleIds) {
+        try {
+            const guildRole = await interaction.guild.roles.fetch(roleId.trim());
+
+            if (guildRole && !member.roles.cache.has(roleId)) {
+                await member.roles.add(guildRole);
+                appliedAddedRoleIds.push(roleId);
                 await new Promise(resolve => setTimeout(resolve, 200));
             }
+        } catch (error) {
+            console.error(`Failed to add role ${roleId}:`, error);
         }
+    }
 
-        // Roles to remove
-        for (const role of removedRoleIds) {
-            const guildRole = await interaction.guild.roles.fetch(role.trim());
-            const hasRole = await member.roles.cache.has(role);
+    for (const roleId of removedRoleIds) {
+        try {
+            const guildRole = await interaction.guild.roles.fetch(roleId.trim());
 
-            if (hasRole) {
-                await member.roles.remove(guildRole).catch(console.error);
+            if (guildRole && member.roles.cache.has(roleId)) {
+                await member.roles.remove(guildRole);
+                appliedRemovedRoleIds.push(roleId);
                 await new Promise(resolve => setTimeout(resolve, 200));
             }
+        } catch (error) {
+            console.error(`Failed to remove role ${roleId}:`, error);
         }
-    })();
+    }
 
-    return [addedRoleIds, removedRoleIds];
+    return [appliedAddedRoleIds, appliedRemovedRoleIds];
 }
 
 module.exports = { updateServerRoles };

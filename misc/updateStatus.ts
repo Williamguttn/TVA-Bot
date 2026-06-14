@@ -5,10 +5,16 @@ const { fetchUserGroupRank } = require("./noblox");
 const { status } = require("./status");
 
 module.exports = async function(noblox, interaction, db, playerId) {
-    const statusGroups = await doSql(db, "SELECT DISTINCT group_id FROM status_binds");
-    if (!db || !playerId || statusGroups.length <= 0) return;
+    if (!db || !playerId) return;
 
     let highestStatus = status.verified;
+    const statusGroups = await doSql(db, "SELECT DISTINCT group_id FROM status_binds");
+
+    if (statusGroups.length <= 0) {
+        await doSql(db, "UPDATE users SET status = ? WHERE roblox_id = ?", [highestStatus, playerId]);
+
+        return highestStatus;
+    }
 
     // Parallel fetch of user ranks for all groups
     const groupRanks = await Promise.all(
@@ -18,8 +24,13 @@ module.exports = async function(noblox, interaction, db, playerId) {
         }))
     );
 
-    const validGroupRanks = groupRanks.filter((entry) => entry.rank > 0);
-    if (validGroupRanks.length === 0) return;
+    const validGroupRanks = groupRanks.filter((entry) => typeof entry.rank === "number" && entry.rank > 0);
+
+    if (validGroupRanks.length === 0) {
+        await doSql(db, "UPDATE users SET status = ? WHERE roblox_id = ?", [highestStatus, playerId]);
+
+        return highestStatus;
+    }
 
     const bindsQuery = `
         SELECT group_id, rank, status 
@@ -29,7 +40,11 @@ module.exports = async function(noblox, interaction, db, playerId) {
     `;
     const binds = await doSql(db, bindsQuery, validGroupRanks.map(g => g.groupId));
 
-    if (binds.length <= 0) return;
+    if (binds.length <= 0) {
+        await doSql(db, "UPDATE users SET status = ? WHERE roblox_id = ?", [highestStatus, playerId]);
+
+        return highestStatus;
+    }
 
     const rankMap = new Map(validGroupRanks.map(entry => [entry.groupId, entry.rank]));
 

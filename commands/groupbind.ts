@@ -32,6 +32,8 @@ module.exports = {
             return;
         }
 
+        const normalizedBinds = [];
+
         for (let [key, value] of Object.entries(bindJSON)) {
             if (typeof value === "object") {
                 errorEmbed(misc.client, interaction, "Type Error", "Value must be a number", "ValType");
@@ -41,6 +43,18 @@ module.exports = {
 
             value = +value;
 
+            if (!Number.isFinite(+key) || !Number.isFinite(value)) {
+                errorEmbed(misc.client, interaction, "Type Error", "Ranks and points must be valid numbers", "ValType");
+
+                return;
+            }
+
+            normalizedBinds.push([key, value]);
+        }
+
+        await doSql(misc.db, "DELETE FROM group_binds WHERE group_id = ?", [groupId]);
+
+        for (const [key, value] of normalizedBinds) {
             await doSql(misc.db, "INSERT INTO group_binds (group_id, rank, points_needed) VALUES (?, ?, ?)", [groupId, key, value]);
         }
 

@@ -32,17 +32,25 @@ module.exports = {
         }
 
 
+        const normalizedBinds = [];
+
         for (const [key, value] of Object.entries(json)) {
             const roleId = key;
             const status = value;
 
-            if (typeof roleId !== "string" || typeof status !== "number") {
+            if (typeof roleId !== "string" || typeof status !== "number" || !Number.isFinite(+roleId)) {
                 errorEmbed(misc.client, interaction, "Type Error", "Type error occured in JSON keys or values", "errorjsonparse");
 
                 return;
             }
 
-           await doSql(misc.db, "INSERT INTO status_binds (group_id, rank, status) VALUES (?, ?, ?)", [groupId, roleId, +status]);
+            normalizedBinds.push([groupId, roleId, +status]);
+        }
+
+        await doSql(misc.db, "DELETE FROM status_binds WHERE group_id = ?", [groupId]);
+
+        for (const [normalizedGroupId, roleId, status] of normalizedBinds) {
+           await doSql(misc.db, "INSERT INTO status_binds (group_id, rank, status) VALUES (?, ?, ?)", [normalizedGroupId, roleId, status]);
         }
 
         reply(interaction, { content: "Status binds have been set!" });

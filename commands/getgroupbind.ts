@@ -2,6 +2,9 @@ const { SlashCommandBuilder } = require("discord.js");
 const { doSql } = require("../database/doSql");
 const { errorEmbed } = require("../misc/error");
 
+// group binds: bind points -> rank
+// rank binds: bind rank -> points
+
 module.exports = {
     verificationNeeded: true,
     statusReq: 4, // Admin

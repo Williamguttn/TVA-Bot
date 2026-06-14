@@ -2,6 +2,7 @@ const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
 const { fetchGroupRoles } = require("../misc/noblox");
 const { errorEmbed } = require("../misc/error");
 const { reply } = require("../misc/reply");
+const { doSql } = require("../database/doSql");
 
 module.exports = {
     verificationNeeded: true,
@@ -37,51 +38,41 @@ module.exports = {
 
         const guildId = interaction.commandGuildId;
         await fetchGroupRoles(noblox, interaction, groupId);
-
-        const insert = misc.db.prepare("INSERT INTO rank_binds (group_id, server_id, rank_start, rank_end, role_id) VALUES (?, ?, ?, ?, ?)");
+        const normalizedBinds = [];
 
         for (const [key, value] of Object.entries(rankJSON)) {
-
             const splitKey = key.split("-");
             const from = +splitKey[0];
             const to = splitKey[1] ? +splitKey[1] : null;
+            const roleIds = Array.isArray(value) ? value : [value];
 
-            const roleId = value;
-            /*if (typeof roleId !== "number" || typeof status !== "number" || typeof from !== "number" || typeof to !== "number") {
-                errorEmbed(misc, client, interaction, "Type Error", "Type error occured in JSON keys or values", "errorjsonparse");
-                
+            if (!Number.isFinite(from) || (to !== null && !Number.isFinite(to)) || roleIds.length <= 0) {
+                errorEmbed(misc.client, interaction, "Type Error", "Each bind must use valid ranks and at least one role ID", "errorjsonparse");
+
                 return;
-            }*/
-            if (typeof groupId == "number") groupId.toString();
-            if (typeof guildId == "number") guildId.toString();
-            if (typeof roleId == "number") roleId.toString();
-
-            if (typeof roleId !== "object") {
-                insert.run(groupId, guildId, from, to, roleId, function(err) {
-                    if (err) {
-                        errorEmbed(misc, misc.client, interaction, "SQL Error", "Failed to write to database", "errorDBwrite");
-                        console.error(err);
-    
-                        return;
-                    }
-                });
-            } else {
-                // Roleid is an object, so we need to loop over it
-                const roleIds = Array.isArray(roleId) ? roleId : [];
-
-                if (roleIds.length > 0) {
-                    for (let i = 0; i < roleIds.length; i++) {
-                        insert.run(groupId, guildId, from, to, roleIds[i], function(err) {
-                            if (err) {
-                                errorEmbed(misc, misc.client, interaction, "SQL Error", "Failed to write to database", "errorDBwrite");
-                                console.error(err);
-
-                                return;
-                            }
-                        });
-                    }
-                }
             }
+
+            for (const roleId of roleIds) {
+                const normalizedRoleId = `${roleId}`.trim();
+
+                if (!/^\d+$/.test(normalizedRoleId)) {
+                    errorEmbed(misc.client, interaction, "Type Error", "Role IDs must contain numbers only", "errorjsonparse");
+
+                    return;
+                }
+
+                normalizedBinds.push([String(groupId), String(guildId), from, to, normalizedRoleId]);
+            }
+        }
+
+        await doSql(misc.db, "DELETE FROM rank_binds WHERE group_id = ? AND server_id = ?", [String(groupId), String(guildId)]);
+
+        for (const [normalizedGroupId, normalizedGuildId, from, to, roleId] of normalizedBinds) {
+            await doSql(
+                misc.db,
+                "INSERT INTO rank_binds (group_id, server_id, rank_start, rank_end, role_id) VALUES (?, ?, ?, ?, ?)",
+                [normalizedGroupId, normalizedGuildId, from, to, roleId]
+            );
         }
 
         const embed = {

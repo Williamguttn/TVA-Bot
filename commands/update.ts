@@ -29,7 +29,7 @@ module.exports = {
                 }
             };
 
-           reply({ embeds: [embed] });
+           reply(interaction, { embeds: [embed] });
 
             return;
         }
@@ -71,7 +71,7 @@ module.exports = {
 
         // Defer the reply, this might take some time
         try {
-            interaction.deferReply();
+            await interaction.deferReply();
         } catch(e) {console.error(e)}
 
         const [addedRoleIds, removedRoleIds] = await updateServerRoles(updateData, member, interaction, misc, noblox);
