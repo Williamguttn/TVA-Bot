@@ -43,7 +43,7 @@ client.login(TOKEN);
 
 require("./api/api")(db, client);
 
-const botWIP = true;
+const botWIP = false;
 const wipList = [
     "724590883915431957",
     "683750424007802916",
