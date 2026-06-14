@@ -20,7 +20,8 @@
     "sqlite3": "^5.1.7",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
-    "zod": "^4.3.6"
+    "zod": "^4.3.6",
+    "rozod": "^6.5.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.0"
