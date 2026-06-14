@@ -27,7 +27,9 @@ module.exports = function(db, client) {
         if (fs.lstatSync(fullPath).isDirectory()) {
             console.log(`Checking route for ${file}`);
 
-            const getFilePath = path.join(fullPath, "get.js");
+            const getFilePath = fs.existsSync(path.join(fullPath, "get.js"))
+            ? path.join(fullPath, "get.js")
+            : path.join(fullPath, "get.ts");
 
             if (fs.existsSync(getFilePath)) {
                 app.get(`/api/${file}`, verifyRequest, (req, res) => {
