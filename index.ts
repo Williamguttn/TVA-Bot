@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const fs = require("fs");
+const path = require("path");
 const {
     GatewayIntentBits,
     Client,
@@ -49,16 +50,19 @@ const wipList = [
     "1030159828548599948"
 ];
 
-const commandsPath = `${__dirname}/commands`;
+const commandsPath = path.join(__dirname, "commands");
 const commandsFolder = fs.readdirSync(commandsPath);
 const commands = [];
+const supportedCommandExtensions = new Set([".js", ".ts"]);
 
 for (const file of commandsFolder) {
-    if (!file.endsWith(".js")) {
+    const extension = path.extname(file);
+
+    if (!supportedCommandExtensions.has(extension) || file.endsWith(".d.ts")) {
         continue;
     }
 
-    const commandModule = require(`${commandsPath}/${file}`);
+    const commandModule = require(path.join(commandsPath, file));
 
     if ("data" in commandModule && "execute" in commandModule) {
         commands.push(commandModule.data.toJSON());

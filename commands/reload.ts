@@ -8,7 +8,7 @@ module.exports = {
 			option.setName('command')
 				.setDescription('The command to reload.')
 				.setRequired(true)),
-	async execute(bot, interaction) {
+	async execute(_roblox, _bot, interaction) {
 		const commandName = interaction.options.getString('command', true).toLowerCase();
 		const command = interaction.client.commands.get(commandName);
 
