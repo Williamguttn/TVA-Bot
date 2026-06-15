@@ -1,9 +1,9 @@
-.env
-.env.*
-!.env.example
+#.env
+#.env.*
+#!.env.example
 node_modules
 dist
 .vscode
-*.db
+#*.db
 *.db-shm
 *.db-wal
