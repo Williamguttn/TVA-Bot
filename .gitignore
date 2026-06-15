@@ -1,6 +1,7 @@
-#.env
+.env
 node_modules
 dist
-#*.db
+.vscode
+*.db
 *.db-shm
 *.db-wal
